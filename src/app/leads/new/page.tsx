@@ -1,59 +1,77 @@
-'use client'
+"use client";
 
-import { useState } from 'react'
-import { useRouter } from 'next/navigation'
-import DashboardLayout from '@/components/dashboard-layout'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Textarea } from '@/components/ui/textarea'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Alert, AlertDescription } from '@/components/ui/alert'
-import { ArrowLeft, Save } from 'lucide-react'
-import Link from 'next/link'
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import DashboardLayout from "@/components/dashboard-layout";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { ArrowLeft, Save } from "lucide-react";
+import Link from "next/link";
 
 export default function NewLeadPage() {
-  const router = useRouter()
-  const [isSubmitting, setIsSubmitting] = useState(false)
-  const [error, setError] = useState('')
-  
+  const router = useRouter();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState("");
+
   const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
-    email: '',
-    phone: '',
-    company: '',
-    jobTitle: '',
-    source: '',
-    status: 'new',
-    notes: '',
-  })
+    firstName: "",
+    lastName: "",
+    email: "",
+    phone: "",
+    company: "",
+    jobTitle: "",
+    source: "",
+    status: "new",
+    notes: "",
+  });
 
   const handleInputChange = (field: string, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }))
-  }
+    setFormData((prev) => ({ ...prev, [field]: value }));
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setIsSubmitting(true)
-    setError('')
+    e.preventDefault();
+    setIsSubmitting(true);
+    setError("");
 
     try {
-      // In a real app, this would be an API call
-      console.log('Submitting lead:', formData)
-      
-      // Simulate API delay
-      await new Promise(resolve => setTimeout(resolve, 1000))
-      
+      const response = await fetch("/api/leads", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to create lead");
+      }
+
       // Redirect to leads page on success
-      router.push('/leads')
+      router.push("/leads");
     } catch {
-      setError('Failed to create lead. Please try again.')
+      setError("Failed to create lead. Please try again.");
     } finally {
-      setIsSubmitting(false)
+      setIsSubmitting(false);
     }
-  }
+  };
 
   return (
     <DashboardLayout>
@@ -95,7 +113,9 @@ export default function NewLeadPage() {
                   <Input
                     id="firstName"
                     value={formData.firstName}
-                    onChange={(e) => handleInputChange('firstName', e.target.value)}
+                    onChange={(e) =>
+                      handleInputChange("firstName", e.target.value)
+                    }
                     required
                   />
                 </div>
@@ -104,7 +124,9 @@ export default function NewLeadPage() {
                   <Input
                     id="lastName"
                     value={formData.lastName}
-                    onChange={(e) => handleInputChange('lastName', e.target.value)}
+                    onChange={(e) =>
+                      handleInputChange("lastName", e.target.value)
+                    }
                     required
                   />
                 </div>
@@ -118,7 +140,7 @@ export default function NewLeadPage() {
                     id="email"
                     type="email"
                     value={formData.email}
-                    onChange={(e) => handleInputChange('email', e.target.value)}
+                    onChange={(e) => handleInputChange("email", e.target.value)}
                     required
                   />
                 </div>
@@ -128,7 +150,7 @@ export default function NewLeadPage() {
                     id="phone"
                     type="tel"
                     value={formData.phone}
-                    onChange={(e) => handleInputChange('phone', e.target.value)}
+                    onChange={(e) => handleInputChange("phone", e.target.value)}
                   />
                 </div>
               </div>
@@ -140,7 +162,9 @@ export default function NewLeadPage() {
                   <Input
                     id="company"
                     value={formData.company}
-                    onChange={(e) => handleInputChange('company', e.target.value)}
+                    onChange={(e) =>
+                      handleInputChange("company", e.target.value)
+                    }
                   />
                 </div>
                 <div className="space-y-2">
@@ -148,7 +172,9 @@ export default function NewLeadPage() {
                   <Input
                     id="jobTitle"
                     value={formData.jobTitle}
-                    onChange={(e) => handleInputChange('jobTitle', e.target.value)}
+                    onChange={(e) =>
+                      handleInputChange("jobTitle", e.target.value)
+                    }
                   />
                 </div>
               </div>
@@ -157,7 +183,12 @@ export default function NewLeadPage() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="status">Status</Label>
-                  <Select value={formData.status} onValueChange={(value) => handleInputChange('status', value)}>
+                  <Select
+                    value={formData.status}
+                    onValueChange={(value) =>
+                      handleInputChange("status", value)
+                    }
+                  >
                     <SelectTrigger>
                       <SelectValue placeholder="Select status" />
                     </SelectTrigger>
@@ -172,7 +203,12 @@ export default function NewLeadPage() {
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="source">Source</Label>
-                  <Select value={formData.source} onValueChange={(value) => handleInputChange('source', value)}>
+                  <Select
+                    value={formData.source}
+                    onValueChange={(value) =>
+                      handleInputChange("source", value)
+                    }
+                  >
                     <SelectTrigger>
                       <SelectValue placeholder="Select source" />
                     </SelectTrigger>
@@ -181,7 +217,9 @@ export default function NewLeadPage() {
                       <SelectItem value="referral">Referral</SelectItem>
                       <SelectItem value="cold_call">Cold Call</SelectItem>
                       <SelectItem value="social_media">Social Media</SelectItem>
-                      <SelectItem value="email_campaign">Email Campaign</SelectItem>
+                      <SelectItem value="email_campaign">
+                        Email Campaign
+                      </SelectItem>
                       <SelectItem value="event">Event</SelectItem>
                       <SelectItem value="other">Other</SelectItem>
                     </SelectContent>
@@ -195,7 +233,7 @@ export default function NewLeadPage() {
                 <Textarea
                   id="notes"
                   value={formData.notes}
-                  onChange={(e) => handleInputChange('notes', e.target.value)}
+                  onChange={(e) => handleInputChange("notes", e.target.value)}
                   placeholder="Add any additional notes about this lead..."
                   rows={3}
                 />
@@ -210,7 +248,7 @@ export default function NewLeadPage() {
                 </Link>
                 <Button type="submit" disabled={isSubmitting}>
                   <Save className="w-4 h-4 mr-2" />
-                  {isSubmitting ? 'Creating...' : 'Create Lead'}
+                  {isSubmitting ? "Creating..." : "Create Lead"}
                 </Button>
               </div>
             </form>
@@ -218,5 +256,5 @@ export default function NewLeadPage() {
         </Card>
       </div>
     </DashboardLayout>
-  )
+  );
 }

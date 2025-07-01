@@ -9,6 +9,7 @@ export async function GET() {
     const { userId } = await auth()
     
     if (!userId) {
+      console.warn('Unauthorized access attempt: userId is missing in /api/leads')
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
@@ -27,6 +28,7 @@ export async function POST(request: NextRequest) {
     const { userId } = await auth()
     
     if (!userId) {
+      console.warn('Unauthorized access attempt: userId is missing in /api/leads')
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 

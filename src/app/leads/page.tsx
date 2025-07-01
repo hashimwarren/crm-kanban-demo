@@ -23,10 +23,8 @@ interface Lead {
 
 // Fetch leads from API
 async function fetchLeads(): Promise<Lead[]> {
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
-  
   try {
-    const response = await fetch(`${baseUrl}/api/leads`, { cache: 'no-store' })
+    const response = await fetch('/api/leads', { cache: 'no-store' })
     if (response.ok) {
       return await response.json()
     }
@@ -49,6 +47,7 @@ export default async function LeadsPage() {
   const { userId } = await auth()
   
   if (!userId) {
+    console.warn('Unauthorized access attempt: userId is missing in /leads/page')
     redirect('/sign-in')
   }
 

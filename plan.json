@@ -1,0 +1,38 @@
+[
+  {
+    "task": "Replace UserButtonFallback demo user with real Clerk user button or appropriate fallback.",
+    "status": "done"
+  },
+  {
+    "task": "In src/app/leads/new/page.tsx, replace simulated API delay and console.log with a real POST to /api/leads and handle the response.",
+    "status": "done"
+  },
+  {
+    "task": "In src/app/leads/page.tsx, use a relative API route (/api/leads) instead of constructing an absolute baseUrl from env.",
+    "status": "done"
+  },
+  {
+    "task": "Add logging or error handling for failed authentication in API routes and pages (e.g., log userId if missing).",
+    "status": "done"
+  },
+  {
+    "task": "In src/app/kanban/page.tsx, use Next.js redirect instead of window.location.href for navigation.",
+    "status": "done"
+  },
+  {
+    "task": "In src/components/dashboard-layout.tsx, check for user authentication before rendering navigation links.",
+    "status": "done"
+  },
+  {
+    "task": "Ensure Drizzle config schema path is correct and CLI can locate it.",
+    "status": "done"
+  },
+  {
+    "task": "Update documentation to reflect all of the above changes and feedback.",
+    "status": "done"
+  },
+  {
+    "task": "Re-run all Playwright and Jest tests after making fixes.",
+    "status": "done"
+  }
+]

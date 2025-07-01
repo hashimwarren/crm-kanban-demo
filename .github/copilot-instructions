@@ -6,44 +6,39 @@ This repository is a modern CRM application built with Next.js, Drizzle ORM, Neo
 
 ---
 
-## How the App Works (Current State)
+## How the App Works (Production State)
 
 - **Authentication:**
-
   - Clerk integration is fully enabled and required for all protected routes.
-  - Custom sign-in/sign-up pages using Clerk components provide branded experience.
+  - Custom sign-in/sign-up pages use Clerk components for a branded experience.
   - Middleware enforces authentication before accessing any protected routes.
 
 - **Database & Data:**
-
   - Drizzle ORM and Neon database are fully connected and operational.
-  - All CRUD operations use the real database - no mock data remains.
+  - All CRUD operations use the real database—no mock data remains.
   - User data is automatically synced between Clerk and the database.
 
 - **Core Features:**
-
-  - **Dashboard:** Real stats, leads, and activity data from database.
+  - **Dashboard:** Real stats, leads, and activity data from the database.
   - **Leads Management:** Full CRUD operations with database persistence.
   - **Deals Management:** Real deal tracking with database storage.
   - **Kanban Board:** Drag-and-drop pipeline with real data.
   - **API Routes:** All secured with Clerk authentication, return real data.
 
 - **Security:**
-
   - All protected routes require Clerk authentication.
-  - API endpoints return 401 for unauthenticated requests.
+  - API endpoints return 401 for unauthenticated requests and log unauthorized access attempts.
   - No demo bypasses or authentication stubs remain.
 
 - **UI Components:**
-
   - Built with shadcn/ui for consistent, accessible design.
   - Includes forms, tables, cards, stats, dialogs, and navigation components.
+  - Navigation links are only rendered for authenticated users.
 
 - **Testing:**
-
-  - **Jest** for unit/component tests (5/5 passing).
-  - **Playwright** for E2E tests (authentication flows working).
-  - Tests updated to work with real authentication requirements.
+  - **Jest** for unit/component tests (all passing).
+  - **Playwright** for E2E tests (authentication flows and real data interactions).
+  - Tests updated to work with real authentication and database requirements.
 
 - **Development Experience:**
   - Hot reload, TypeScript, ESLint, optimized builds.
@@ -61,7 +56,7 @@ test-planning/
 │   │   ├── leads/           # Lead management and forms
 │   │   ├── deals/           # Deal management tables
 │   │   ├── kanban/          # Kanban board interface
-│   │   └── sign-in,sign-up/ # Authentication pages (demo)
+│   │   └── sign-in,sign-up/ # Authentication pages (Clerk)
 │   ├── components/          # Reusable UI components
 │   │   ├── ui/              # shadcn/ui components
 │   │   └── dashboard-layout.tsx
@@ -106,35 +101,20 @@ npx drizzle-kit push     # Push schema to database
 
 ---
 
-## Current Limitations
+## Production Readiness
 
-- **Demo Mode:**
-
-  - No real authentication or user sessions.
-  - No real database persistence; all data is mock/in-memory.
-  - All pages are accessible without login.
-
-- **Production Readiness:**
-  - Structure, tests, and design are production-ready.
-  - Real Clerk authentication and Neon database integration must be enabled for production use.
-
----
-
-## Next Steps
-
-- Enable Clerk authentication for all protected routes.
-- Connect all CRUD operations to Neon via Drizzle ORM.
-- Remove demo/mock data and authentication stubs.
-- Implement role-based access control and user management.
-- Deploy to Vercel with production environment variables.
-
----
+- **Authentication:** Clerk is required for all protected routes and API endpoints.
+- **Database:** All CRUD operations use Neon via Drizzle ORM; no mock/demo data remains.
+- **Navigation:** Navigation links are only visible to authenticated users.
+- **Error Handling:** Unauthorized API/page access is logged and returns 401 or redirects to sign-in.
+- **Drizzle Config:** Schema path is set to `./src/app/db/schema.ts` and CLI is verified to work.
+- **Testing:** All Playwright and Jest tests must pass after any code changes.
 
 ---
 
 **Status:**
 
-- Fully functional demo application
+- Production application
 - All tests passing
-- Production build ready
-- Last updated: June 1, 2025
+- Ready for deployment
+- Last updated: July 1, 2025

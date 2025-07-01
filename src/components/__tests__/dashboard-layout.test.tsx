@@ -3,19 +3,33 @@
  */
 
 import { render, screen } from '@testing-library/react';
+import { ClerkProvider } from '@clerk/nextjs';
 import DashboardLayout from '@/components/dashboard-layout';
 
 // Mock Next.js router
 jest.mock('next/navigation', () => ({
   usePathname: () => '/dashboard',
+  useRouter: () => ({ push: jest.fn(), replace: jest.fn(), prefetch: jest.fn() }),
+}));
+
+// Mock Clerk useUser to always return an authenticated user
+jest.mock('@clerk/nextjs', () => ({
+  ...jest.requireActual('@clerk/nextjs'),
+  useUser: () => ({ user: { id: 'user_123', firstName: 'Test', lastName: 'User' }, isLoaded: true }),
 }));
 
 describe('DashboardLayout', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
   it('renders navigation items', () => {
     render(
-      <DashboardLayout>
-        <div>Test content</div>
-      </DashboardLayout>
+      <ClerkProvider>
+        <DashboardLayout>
+          <div>Test content</div>
+        </DashboardLayout>
+      </ClerkProvider>
     );
 
     // Check that navigation items are present - using getAllByRole to handle duplicates
@@ -34,9 +48,11 @@ describe('DashboardLayout', () => {
 
   it('renders CRM title', () => {
     render(
-      <DashboardLayout>
-        <div>Test content</div>
-      </DashboardLayout>
+      <ClerkProvider>
+        <DashboardLayout>
+          <div>Test content</div>
+        </DashboardLayout>
+      </ClerkProvider>
     );
 
     expect(screen.getByRole('heading', { name: 'CRM' })).toBeInTheDocument();
@@ -44,30 +60,23 @@ describe('DashboardLayout', () => {
 
   it('renders children content', () => {
     render(
-      <DashboardLayout>
-        <div>Test content</div>
-      </DashboardLayout>
+      <ClerkProvider>
+        <DashboardLayout>
+          <div>Test content</div>
+        </DashboardLayout>
+      </ClerkProvider>
     );
 
     expect(screen.getByText('Test content')).toBeInTheDocument();
   });
 
-  it('renders demo user fallback', () => {
-    render(
-      <DashboardLayout>
-        <div>Test content</div>
-      </DashboardLayout>
-    );
-
-    expect(screen.getByText('Demo User')).toBeInTheDocument();
-    expect(screen.getByText('U')).toBeInTheDocument();
-  });
-
   it('highlights active navigation item', () => {
     render(
-      <DashboardLayout>
-        <div>Test content</div>
-      </DashboardLayout>
+      <ClerkProvider>
+        <DashboardLayout>
+          <div>Test content</div>
+        </DashboardLayout>
+      </ClerkProvider>
     );
 
     // Get all dashboard links and check that at least one has the active class
