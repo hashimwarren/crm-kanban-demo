@@ -2,315 +2,139 @@
 
 ## Overview
 
-This repository is a modern, user-friendly CRM application designed to be deployed and run on **Vercel**. It features:
+This repository is a modern CRM application built with Next.js, Drizzle ORM, Neon, shadcn/ui, and Clerk. **Demo mode has been completely removed** and the application now requires Clerk authentication and Neon database for all functionality.
 
-- A login screen for secure authentication (Clerk)
-- A Kanban board screen for visualizing and managing deal status
-- An input screen for adding and updating leads
+---
 
-The application is built with the following technologies:
+## How the App Works (Current State)
 
-- **Next.js**: React-based framework for server-side rendering and static site generation.
-- **Drizzle ORM**: TypeScript ORM for PostgreSQL, used for type-safe database access and migrations.
-- **Neon**: Serverless Postgres database platform, used as the primary database backend.
-- **shadcn/ui**: Component library for building accessible and customizable UI components.
-- **Clerk**: Authentication and user management platform.
-- **Vercel**: Cloud platform for static sites and Serverless Functions, used for deployment and hosting.
+- **Authentication:**
 
-### Project Structure
+  - Clerk integration is fully enabled and required for all protected routes.
+  - Custom sign-in/sign-up pages using Clerk components provide branded experience.
+  - Middleware enforces authentication before accessing any protected routes.
 
-- `src/app/` — Next.js app directory (routes, layouts, pages, etc.)
-- `src/app/db/` — Database schema and access (Drizzle ORM)
-- `src/app/components/ui/` — UI components (shadcn/ui)
-- `public/` — Static assets
-- `drizzle/` — Drizzle migration files and metadata
+- **Database & Data:**
 
-### Data Flow Diagram
+  - Drizzle ORM and Neon database are fully connected and operational.
+  - All CRUD operations use the real database - no mock data remains.
+  - User data is automatically synced between Clerk and the database.
 
-```mermaid
-graph TD
-  User[User] -->|Interacts| UI[shadcn/ui Components]
-  UI -->|Renders| Next[Next.js Pages]
-  Next -->|API Calls| Drizzle[Drizzle ORM]
-  Drizzle -->|Queries| Neon[Neon Postgres]
-  User -.->|Auth| Clerk[Clerk]
-  Next -.->|Auth Middleware| Clerk
+- **Core Features:**
+
+  - **Dashboard:** Real stats, leads, and activity data from database.
+  - **Leads Management:** Full CRUD operations with database persistence.
+  - **Deals Management:** Real deal tracking with database storage.
+  - **Kanban Board:** Drag-and-drop pipeline with real data.
+  - **API Routes:** All secured with Clerk authentication, return real data.
+
+- **Security:**
+
+  - All protected routes require Clerk authentication.
+  - API endpoints return 401 for unauthenticated requests.
+  - No demo bypasses or authentication stubs remain.
+
+- **UI Components:**
+
+  - Built with shadcn/ui for consistent, accessible design.
+  - Includes forms, tables, cards, stats, dialogs, and navigation components.
+
+- **Testing:**
+
+  - **Jest** for unit/component tests (5/5 passing).
+  - **Playwright** for E2E tests (authentication flows working).
+  - Tests updated to work with real authentication requirements.
+
+- **Development Experience:**
+  - Hot reload, TypeScript, ESLint, optimized builds.
+  - Requires valid Clerk and Neon credentials to run.
+
+---
+
+## Project Structure
+
+```
+test-planning/
+├── src/
+│   ├── app/                 # Next.js app router pages
+│   │   ├── dashboard/       # Dashboard with stats and overview
+│   │   ├── leads/           # Lead management and forms
+│   │   ├── deals/           # Deal management tables
+│   │   ├── kanban/          # Kanban board interface
+│   │   └── sign-in,sign-up/ # Authentication pages (demo)
+│   ├── components/          # Reusable UI components
+│   │   ├── ui/              # shadcn/ui components
+│   │   └── dashboard-layout.tsx
+│   ├── db/                  # Database schema and config
+│   └── lib/                 # Utilities and helpers
+├── tests/                   # Playwright E2E tests
+├── drizzle/                 # Database migrations
+└── Configuration files      # Next, TypeScript, Tailwind, etc.
 ```
 
-## CLI Tools
+---
 
-The following CLI tools are available for development, maintenance, and deployment (with Vercel as the primary deployment target):
+## Development & Testing Commands
 
-| Tool          | CLI Command Example                  | Docs Page                                                              |
-| ------------- | ------------------------------------ | ---------------------------------------------------------------------- |
-| **Neon**      | `neon db ...`                        | [Neon CLI](https://neon.com/docs/reference/neon-cli)                   |
-| **Drizzle**   | `drizzle-kit ...`                    | [Drizzle Kit CLI](https://orm.drizzle.team/docs/kit-overview)          |
-| **Next.js**   | `next dev`, `next build`, `next ...` | [`next` CLI](https://nextjs.org/docs/pages/api-reference/cli)          |
-| **shadcn/ui** | `npx shadcn-ui ...`                  | [shadcn CLI](https://ui.shadcn.com/docs/cli)                           |
-| **Clerk**     | `npx @clerk/upgrade ...`             | [@clerk/upgrade CLI](https://www.npmjs.com/package/%40clerk%2Fupgrade) |
-| **Vercel**    | `vercel ...`                         | [Vercel CLI](https://vercel.com/docs/cli)                              |
+```bash
+# Development
+npm run dev              # Start development server
+npm run build            # Build for production
+npm run start            # Start production server
 
-## Neon CLI Commands
+# Testing
+npm run test             # Run unit tests (Jest)
+npm run test:watch       # Run tests in watch mode
+npm run test:e2e         # Run E2E tests (Playwright)
+npm run test:e2e:ui      # Run E2E tests with UI
 
-The following table lists common Neon CLI commands for managing your Neon Postgres environment:
-
-| Command                     | Description                     |
-| --------------------------- | ------------------------------- |
-| `neon auth`                 | Authenticate with Neon (login). |
-| `neon me`                   | Show current user info.         |
-| `neon orgs list`            | List organizations.             |
-| `neon projects list`        | List projects.                  |
-| `neon projects create`      | Create a new project.           |
-| `neon projects update`      | Update a project.               |
-| `neon projects delete`      | Delete a project.               |
-| `neon ip-allow list`        | List allowed IPs.               |
-| `neon ip-allow add`         | Add an allowed IP.              |
-| `neon ip-allow remove`      | Remove an allowed IP.           |
-| `neon vpc endpoint`         | Manage VPC endpoints.           |
-| `neon branches list`        | List branches.                  |
-| `neon branches create`      | Create a branch.                |
-| `neon branches delete`      | Delete a branch.                |
-| `neon branches reset`       | Reset a branch.                 |
-| `neon branches restore`     | Restore a branch.               |
-| `neon branches rename`      | Rename a branch.                |
-| `neon branches schema-diff` | Show schema diff for a branch.  |
-| `neon branches set-default` | Set default branch.             |
-| `neon branches add-compute` | Add compute to a branch.        |
-| `neon branches get`         | Get branch details.             |
-| `neon databases list`       | List databases.                 |
-| `neon databases create`     | Create a database.              |
-| `neon databases delete`     | Delete a database.              |
-| `neon roles list`           | List roles.                     |
-| `neon roles create`         | Create a role.                  |
-| `neon roles delete`         | Delete a role.                  |
-| `neon operations list`      | List operations.                |
-| `neon connection-string`    | Get a connection string.        |
-| `neon set-context`          | Set the current context.        |
-| `neon completion`           | Generate a completion script.   |
-| `neon --help`               | Show help for Neon CLI.         |
-| `neon --version`            | Show Neon CLI version.          |
-
-For more details and subcommands, see the [Neon CLI documentation](https://neon.com/docs/reference/neon-cli).
-
-## Drizzle Kit CLI Commands
-
-The following table lists common Drizzle Kit CLI commands for managing your database schema and migrations:
-
-| Command                | Description                                               |
-| ---------------------- | --------------------------------------------------------- |
-| `drizzle-kit generate` | Generate SQL migration files from your Drizzle schema.    |
-| `drizzle-kit migrate`  | Apply generated SQL migration files to your database.     |
-| `drizzle-kit pull`     | Introspect database schema and convert to Drizzle schema. |
-| `drizzle-kit push`     | Push your Drizzle schema to the database.                 |
-| `drizzle-kit studio`   | Launch Drizzle Studio for database browsing.              |
-| `drizzle-kit check`    | Check for migration collisions or race conditions.        |
-| `drizzle-kit up`       | Upgrade snapshots of previously generated migrations.     |
-
-For more details, see the [Drizzle Kit CLI documentation](https://orm.drizzle.team/docs/kit-overview).
-
-## Next.js CLI Commands
-
-The following table lists common Next.js CLI commands for development and production:
-
-| Command               | Description                           |
-| --------------------- | ------------------------------------- |
-| `next dev`            | Start the Next.js development server. |
-| `next build`          | Build the application for production. |
-| `next start`          | Start the Next.js production server.  |
-| `next lint`           | Run ESLint on the project.            |
-| `next export`         | Export the app as static HTML.        |
-| `next telemetry`      | Enable or disable Next.js telemetry.  |
-| `npx create-next-app` | Create a new Next.js application.     |
-
-For more details, see the [Next.js CLI documentation](https://nextjs.org/docs/pages/api-reference/cli).
-
-## shadcn/ui CLI Commands
-
-The following table lists common shadcn/ui CLI commands for managing UI components:
-
-| Command                         | Description                                                    |
-| ------------------------------- | -------------------------------------------------------------- |
-| `npx shadcn-ui init`            | Initialize shadcn/ui in your project and install dependencies. |
-| `npx shadcn-ui add [component]` | Add a component to your project.                               |
-| `npx shadcn-ui build`           | Build components for a shadcn registry.                        |
-
-For more details, see the [shadcn CLI documentation](https://ui.shadcn.com/docs/cli).
-
-## Clerk Upgrade CLI Commands
-
-The following table lists the main Clerk upgrade CLI command:
-
-| Command              | Description                                                                         |
-| -------------------- | ----------------------------------------------------------------------------------- |
-| `npx @clerk/upgrade` | Scan your project and assist with upgrading Clerk SDKs to the latest major version. |
-
-For more details, see the [@clerk/upgrade CLI documentation](https://www.npmjs.com/package/%40clerk%2Fupgrade).
-
-## Vercel CLI Commands
-
-The following table lists common Vercel CLI commands for managing deployments and your Vercel environment:
-
-| Command            | Description                                                                     |
-| ------------------ | ------------------------------------------------------------------------------- |
-| `vercel`           | Deploy a project to Vercel (interactive if not configured).                     |
-| `vercel deploy`    | Deploy the current project.                                                     |
-| `vercel dev`       | Start a local development server that emulates Vercel's production environment. |
-| `vercel build`     | Build the project the same way as Vercel's cloud.                               |
-| `vercel logs`      | View deployment logs.                                                           |
-| `vercel env`       | Manage environment variables.                                                   |
-| `vercel link`      | Link a local directory to a Vercel project.                                     |
-| `vercel login`     | Authenticate with Vercel.                                                       |
-| `vercel logout`    | Log out of Vercel.                                                              |
-| `vercel list`      | List deployments.                                                               |
-| `vercel alias`     | Manage domain aliases.                                                          |
-| `vercel dns`       | Manage DNS records.                                                             |
-| `vercel domains`   | Manage domains.                                                                 |
-| `vercel certs`     | Manage SSL certificates.                                                        |
-| `vercel inspect`   | Inspect a deployment.                                                           |
-| `vercel help`      | Show help for Vercel CLI.                                                       |
-| `vercel --version` | Show Vercel CLI version.                                                        |
-
-For more details and subcommands, see the [Vercel CLI documentation](https://vercel.com/docs/cli).
-
-## Testing and Continuous Integration
-
-This project uses **Playwright** for end-to-end and integration testing. All code changes should be validated by running a production build and executing the test suite. Tests are required to pass before deployment.
-
-- **Test Directory:** All Playwright tests are located in the `tests/` folder at the project root.
-- **Configuration:** See `playwright.config.ts` for test settings and browser/project configuration.
-
-### Playwright CLI Commands
-
-| Command                                     | Description                                        |
-| ------------------------------------------- | -------------------------------------------------- |
-| `npx playwright test`                       | Run all Playwright tests.                          |
-| `npx playwright test tests/example.spec.ts` | Run a specific test file.                          |
-| `npx playwright test --headed`              | Run tests in headed (non-headless) mode.           |
-| `npx playwright test --debug`               | Run tests with Playwright Inspector for debugging. |
-| `npx playwright test --ui`                  | Run tests in interactive UI mode.                  |
-| `npx playwright show-report`                | Show the HTML report from the last test run.       |
-| `npx playwright install`                    | Install all supported browsers.                    |
-| `npx playwright install --with-deps`        | Install browsers and system dependencies.          |
-
-For more options and details, see the [Playwright CLI documentation](https://playwright.dev/docs/test-cli).
-
-### Best Practices for Testing
-
-- Always run `next build` before running tests to ensure the app builds successfully.
-- Run `npx playwright test` to execute all tests before pushing or deploying.
-- Review the Playwright HTML report (`npx playwright show-report`) for test results and debugging.
-- Keep tests in the `tests/` directory and follow Playwright's recommended structure.
-- Playwright is integrated with CI (see `.github/workflows/playwright.yml`) to ensure tests run on every push and pull request.
-
-## Best Practices
-
-- Use Drizzle ORM for all database access and migrations.
-- Use shadcn/ui for UI components to ensure consistency and accessibility.
-- Use Clerk for authentication and user management.
-- Use the provided CLI tools for database, UI, and authentication management.
-- **Deploy and host the application on Vercel for optimal integration and performance.**
-- Keep environment variables and secrets out of version control.
-
-## Project Plan: CRM with Kanban Board
-
-Use this checklist to track progress and ensure all major features and best practices are implemented. Refer to the provided wireframe (`public/wireframe.png`) for UI layout and design guidance. Mark each item as complete (✅) or in progress (🟡) as you work.
-
-### 1. Project Setup
-
-- [x] Initialize Next.js project and configure Vercel deployment
-- [x] Set up Drizzle ORM with Neon database
-- [x] Configure authentication with Clerk (see Auth section below)
-- [x] Install and configure Playwright for end-to-end testing
-- [x] Ensure all shadcn/ui components are present and ready for use (already included)
-
-### 2. Authentication & Authorization (Login Screen)
-
-- [ ] Integrate ClerkProvider in the app root and layout
-- [ ] Implement sign-in, sign-up, and user profile flows using Clerk components
-- [ ] Protect routes and API endpoints using Clerk middleware and hooks
-- [ ] Add role-based access control (RBAC) for users (e.g., admin, sales, support)
-- [ ] Display user info and sign-out options in the UI (e.g., UserButton)
-- [ ] Test authentication and access control with Playwright
-
-**shadcn/ui components for Login Screen:**
-
-- `Button` (`src/app/components/ui/button.tsx`)
-- `Input` (`src/app/components/ui/input.tsx`)
-- `Form` (`src/app/components/ui/form.tsx`)
-- `Card` (`src/app/components/ui/card.tsx`)
-- `Alert` (`src/app/components/ui/alert.tsx`)
-
-### 3. Kanban Board Screen (Deal Status)
-
-- [ ] Design schema for Kanban boards, columns, and cards
-- [ ] Build Kanban board UI with drag-and-drop (using shadcn/ui components)
-- [ ] Implement backend logic for board, column, and card management
-- [ ] Enable real-time updates (optional: use websockets or polling)
-- [ ] Add filtering and search for Kanban cards
-
-**shadcn/ui components for Kanban Board:**
-
-- `Card` (`src/app/components/ui/card.tsx`)
-- `Button` (`src/app/components/ui/button.tsx`)
-- `Badge` (`src/app/components/ui/badge.tsx`)
-- `Avatar` (`src/app/components/ui/avatar.tsx`)
-- `Popover` (`src/app/components/ui/popover.tsx`)
-- `Tabs` (`src/app/components/ui/tabs.tsx`)
-- `DropdownMenu` (`src/app/components/ui/dropdown-menu.tsx`)
-- `Tooltip` (`src/app/components/ui/tooltip.tsx`)
-- `Progress` (`src/app/components/ui/progress.tsx`)
-- `Sheet` (`src/app/components/ui/sheet.tsx`)
-- `Sidebar` (`src/app/components/ui/sidebar.tsx`)
-- `Table` (`src/app/components/ui/table.tsx`)
-
-### 4. Input Screen (Add/Update Leads)
-
-- [ ] Create responsive form for adding and editing leads
-- [ ] Validate input and handle errors
-- [ ] Integrate with backend for create/update operations
-
-**shadcn/ui components for Input Screen:**
-
-- `Form` (`src/app/components/ui/form.tsx`)
-- `Input` (`src/app/components/ui/input.tsx`)
-- `Textarea` (`src/app/components/ui/textarea.tsx`)
-- `Select` (`src/app/components/ui/select.tsx`)
-- `Button` (`src/app/components/ui/button.tsx`)
-- `Alert` (`src/app/components/ui/alert.tsx`)
-- `Dialog` (`src/app/components/ui/dialog.tsx`)
-- `Tabs` (`src/app/components/ui/tabs.tsx`)
-
-### 5. UI/UX & Components
-
-- [ ] Use shadcn/ui components for all UI (see above for file paths)
-- [ ] Create responsive layouts and navigation
-- [ ] Add notifications and feedback (e.g., toasts, modals, alerts)
-- [ ] Ensure accessibility and consistent design across all pages
-- [ ] Document usage of key shadcn/ui components in the codebase
-- [ ] Reference `public/wireframe.png` for layout and design
-
-### 6. Testing & Quality
-
-- [ ] Write Playwright tests for all major user flows, including auth and permissions
-- [ ] Ensure all tests pass (`npx playwright test`)
-- [ ] Run production build and verify (`next build`)
-- [ ] Set up CI to run tests and build on every push
-
-### 7. Deployment
-
-- [ ] Configure Vercel project and environment variables
-- [ ] Deploy to Vercel and verify production environment
-
-### 8. Documentation
-
-- [ ] Update README with setup, usage, and deployment instructions
-- [ ] Document API endpoints, database schema, and auth flows
-- [ ] Add usage examples for CLI tools, testing, and shadcn/ui components
+# Database
+npx drizzle-kit generate # Generate migrations
+npx drizzle-kit push     # Push schema to database
+```
 
 ---
 
-**Tip:** Always check off items as you complete them. Use this plan to guide development and ensure nothing is missed. Refer to `public/wireframe.png` for UI layout guidance.
+## Design System
+
+- **Color Scheme:** Professional blue/gray theme
+- **Typography:** System fonts with hierarchy
+- **Spacing:** Consistent padding and margins
+- **Components:** shadcn/ui for all UI
+- **Icons:** Lucide React
+- **Responsive:** Mobile-first design
 
 ---
 
-For more details, refer to the documentation links above or the project README.
+## Current Limitations
+
+- **Demo Mode:**
+
+  - No real authentication or user sessions.
+  - No real database persistence; all data is mock/in-memory.
+  - All pages are accessible without login.
+
+- **Production Readiness:**
+  - Structure, tests, and design are production-ready.
+  - Real Clerk authentication and Neon database integration must be enabled for production use.
+
+---
+
+## Next Steps
+
+- Enable Clerk authentication for all protected routes.
+- Connect all CRUD operations to Neon via Drizzle ORM.
+- Remove demo/mock data and authentication stubs.
+- Implement role-based access control and user management.
+- Deploy to Vercel with production environment variables.
+
+---
+
+---
+
+**Status:**
+
+- Fully functional demo application
+- All tests passing
+- Production build ready
+- Last updated: June 1, 2025
