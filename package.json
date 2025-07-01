@@ -6,7 +6,12 @@
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui"
   },
   "dependencies": {
     "@clerk/nextjs": "^6.23.2",
@@ -76,6 +81,7 @@
     "eslint": "^9",
     "eslint-config-next": "15.3.4",
     "jest": "^30.0.3",
+    "jest-environment-jsdom": "^30.0.2",
     "tailwindcss": "^4",
     "ts-jest": "^29.4.0",
     "tw-animate-css": "^1.3.4",
