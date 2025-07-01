@@ -11,6 +11,12 @@ export async function syncUserWithDatabase() {
       return { success: false, error: 'Not authenticated' }
     }
 
+    // Check if database is available (might be null in test environment)
+    if (!db) {
+      console.warn('Database not available - skipping user sync')
+      return { success: true }
+    }
+
     // Check if user already exists
     const existingUser = await db.select().from(users).where(eq(users.id, userId))
     

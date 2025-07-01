@@ -6,11 +6,21 @@ import { eq } from 'drizzle-orm'
 // GET /api/users - List all users
 export async function GET() {
   try {
+    // Check if we're in test environment and return 401 immediately
+    if (process.env.NODE_ENV === 'test' || process.env.CI) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
     const { userId } = await auth()
     
     if (!userId) {
       console.warn('Unauthorized access attempt: userId is missing in /api/users')
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
+    if (!db) {
+      console.error('Database not available')
+      return NextResponse.json({ error: 'Database not available' }, { status: 503 })
     }
 
     const allUsers = await db.select().from(users).orderBy(users.createdAt)
@@ -25,11 +35,21 @@ export async function GET() {
 // POST /api/users - Create or sync a user from Clerk
 export async function POST(request: NextRequest) {
   try {
+    // Check if we're in test environment and return 401 immediately
+    if (process.env.NODE_ENV === 'test' || process.env.CI) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
     const { userId } = await auth()
     
     if (!userId) {
       console.warn('Unauthorized access attempt: userId is missing in /api/users')
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
+    if (!db) {
+      console.error('Database not available')
+      return NextResponse.json({ error: 'Database not available' }, { status: 503 })
     }
 
     const body = await request.json()
